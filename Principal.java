@@ -1,6 +1,6 @@
 
-import menu.MenuLivros;
-import menu.MenuPessoas;
+import menu.MenuCursos;
+import menu.MenuUsuario;
 
 import java.util.Scanner;
 
@@ -28,10 +28,10 @@ public class Principal {
 
             switch (opcao) {
                 case 1: 
-                    (new MenuPessoas()).menu();
+                    (new MenuUsuario()).menu();
                     break;
                 case 2:
-                    (new MenuLivros()).menu();
+                    (new MenuCursos()).menu();
                     break;
                 case 0:
                     System.out.println("Saindo...");

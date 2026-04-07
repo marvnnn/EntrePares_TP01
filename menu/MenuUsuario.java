@@ -1,24 +1,24 @@
 package menu;
 import arquivo.*;
-import entidades.Livro;
-import entidades.Pessoa;
+import entidades.Curso;
+import entidades.Usuario;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-public class MenuPessoas {
+public class MenuUsuario {
 
-    ArquivoPessoa arqPessoas;
-    ArquivoLivro arqLivros;
+    ArquivoUsuario arqUsuario;
+    ArquivoCurso arqCurso;
     Scanner console;
 
     public void menu() {
 
         try {
             console = new Scanner(System.in);
-            arqPessoas = new ArquivoPessoa();
-            arqLivros = new ArquivoLivro();
+            arqUsuario = new ArquivoUsuario();
+            arqCurso = new ArquivoCurso();
 
             int opcao;
             do {
@@ -26,12 +26,11 @@ public class MenuPessoas {
                 System.out.println(    "--------");
                 System.out.println("\n> Início > Pessoas\n");
                 System.out.println("1 - Inserir");
-                System.out.println("2 - Buscar por CPF");
+                System.out.println("2 - Buscar por Email");
                 System.out.println("3 - Buscar por Nome");
                 System.out.println("4 - Alterar");
                 System.out.println("5 - Excluir");
                 System.out.println("8 - Listagem");
-                System.out.println("9 - Popular BD");
                 System.out.println("0 - Retornar ao menu anterior");
                 System.out.print("\nOpção: ");
                 try {
@@ -69,8 +68,8 @@ public class MenuPessoas {
             } while (opcao != 0);
 
             // fecha os arquivos
-            arqPessoas.close();
-            arqLivros.close();
+            arqUsuario.close();
+            arqCurso.close();
 
         } catch(Exception e) {
             System.err.println("Não foi possível criar o menu de pessoas!");
@@ -80,8 +79,10 @@ public class MenuPessoas {
 
     private void inserir() throws Exception {
         String nome;
-        String cpf;
-        LocalDate dataNascimento;
+        String email;
+        String senha;
+        String pergunta;
+        String resposta;
         boolean dadosValidos;                  
         System.out.println("INCLUSÃO");
         System.out.print("Nome: ");
@@ -90,47 +91,59 @@ public class MenuPessoas {
         if(nome.length()==0)
             return;
 
-        // CPF
+        // email
         dadosValidos = false;
         do {
-            System.out.print("CPF: ");
-            cpf = console.nextLine();
-            if(cpf.length()==0)
+            System.out.print("Email: ");
+            email = console.nextLine();
+            if(email.length()==0)
                 return;
-            if(!cpf.matches("\\d{11}")) {
-                System.out.println("CPF inválido!");
-            } else {
-                Pessoa p1 = arqPessoas.readCPF(cpf);
-                if(p1!=null)
-                    System.out.println("CPF já cadastrado!");
-                else if(cpf.length()==11)
-                    dadosValidos = true;
-            }
-        } while(!dadosValidos);
-
-        // Data de nascimento
-        dadosValidos = false;
-        dataNascimento = LocalDate.now();
-        do {
-            System.out.print("Data de nascimento (dd/mm/aaaa): ");
-            String aux = console.nextLine();
-            try {
-                String[] dadosData = aux.split("/");
-                dataNascimento = LocalDate.of(
-                    Integer.parseInt(dadosData[2]),
-                    Integer.parseInt(dadosData[1]),
-                    Integer.parseInt(dadosData[0]));
+    
+            Usuario p1 = arqUsuario.readEmail(email); // confere se existe alguem com o email  -- criar o readEmail
+            if(p1!=null)
+                System.out.println("Email já cadastrado!");
+            else
                 dadosValidos = true;
-            } catch(Exception e) {
-                System.out.println("Data inválida!");
-            }
-        } while(!dadosValidos);
+        } while(dadosValidos != true);
+
+       // senha
+       dadosValidos = false;
+       do { 
+            System.out.println("Senha: ");
+            senha = console.nextLine();
+            if(senha.length() < 6)
+                System.out.println("Senha deve conter pelo menos 6 caracteres");
+            else 
+                dadosValidos = true;
+       } while (dadosValidos != true);
+
+        // pergunta
+       dadosValidos = false;
+       do { 
+            System.out.println("Pergunta Secreta: ");
+            pergunta = console.nextLine();
+            if(pergunta.length() < 6)
+                System.out.println("Pergunta secreta deve conter pelo menos 6 caracteres");
+            else 
+                dadosValidos = true;
+       } while (dadosValidos != true);
+
+        // resposta
+       dadosValidos = false;
+       do { 
+            System.out.println("Resposta: ");
+            resposta = console.nextLine();
+            if(resposta.length() < 6)
+                System.out.println("Resposta deve conter pelo menos 6 caracteres");
+            else 
+                dadosValidos = true;
+       } while (dadosValidos != true);
 
         System.out.print("Confirmar inclusão (S/N) ?");
         String confirma = console.nextLine();
         if(confirma.charAt(0)=='S' || confirma.charAt(0)=='s') {
-            Pessoa p = new Pessoa(nome, cpf, dataNascimento);
-            arqPessoas.create(p);
+            Usuario p = new Usuario(nome, email, senha.hashCode(), pergunta, resposta.hashCode());
+            arqUsuario.create(p);
             System.out.println("Pessoa incluída!");
         }
     }
@@ -145,7 +158,7 @@ public class MenuPessoas {
             System.out.println("CPF inválido!");
             return;
         }
-        Pessoa p = arqPessoas.readCPF(cpf);
+        Usuario p = arqUsuario.readEmail(email);
         if(p!=null)
             mostraPessoa(p);
         else
@@ -158,9 +171,9 @@ public class MenuPessoas {
         String nome = console.nextLine();
         if(nome.length()==0)
             return;
-        Pessoa[] pessoas = arqPessoas.readNome(nome);
+        Usuario[] pessoas = arqUsuario.readNome(nome);
         if(pessoas.length>0) {
-            for(Pessoa p : pessoas)
+            for(Usuario p : pessoas)
                 mostraPessoa(p);
         }
         else
@@ -169,23 +182,19 @@ public class MenuPessoas {
 
     private void excluir() throws Exception {
         System.out.println("EXCLUSÃO");
-        System.out.print("CPF: ");
-        String cpf = console.nextLine();
-        if(cpf.length()==0)
+        System.out.print("Email: ");
+        String email = console.nextLine();
+        if(email.length()==0)
             return;
-        if(!cpf.matches("\\d{11}")) {
-            System.out.println("CPF inválido!");
-            return;
-        }
-        Pessoa p = arqPessoas.readCPF(cpf);
+        Usuario p = arqUsuario.readEmail(email);
         if(p!=null) {
             mostraPessoa(p);
 
-            Livro[] livros = arqLivros.readAutor(p.getID());
-            if(livros.length>0) {
+            Curso[] cursos = arqCurso.readAutor(p.getID());
+            if(cursos.length>0) {
                 System.out.println("\nATENÇÃO: Esta pessoa é autora dos seguintes livros:");
-                for(Livro l : livros)
-                    System.out.println(" - "+l.getTitulo() + "(ISBN: " + l.getIsbn() + ")");
+                for(Curso l : cursos)
+                    System.out.println(" - "+l.getNome() + "(Código: " + l.getCod() + ")");
                 System.out.println("Exclusão não permitida!");
                 return;
             }
@@ -193,7 +202,7 @@ public class MenuPessoas {
             System.out.print("\nConfirma exclusão (S/N) ?");
             String confirma = console.nextLine();
             if(confirma.charAt(0)=='S' || confirma.charAt(0)=='s') {
-                if(arqPessoas.delete(p.getID()))
+                if(arqUsuario.delete(p.getID()))
                     System.out.println("Pessoa excluída!");
                 else
                     System.out.println("Erro na exclusão!");
@@ -213,14 +222,17 @@ public class MenuPessoas {
             System.out.println("CPF inválido!");
             return;
         }
-        Pessoa p = arqPessoas.readCPF(cpf);
+        Usuario p = arqUsuario.readCPF(cpf);
 
         if(p!=null) {
             mostraPessoa(p);
 
             System.out.println("\nAltere os dados a seguir. Deixe o campo em branco quando não quiser alterar.");
             String novoNome;
-            String novoCPF;
+            String novoEmail;
+            String novaPergunta;
+            String novaSenha;
+            String novaResposta;
             LocalDate novaDN;
 
             // Alteração do nome
@@ -229,31 +241,26 @@ public class MenuPessoas {
             if(novoNome.length()>0)
                 p.setNome(novoNome);
 
-            // Alteração do CPF
+            // Alteração do email
             boolean dadosValidos = false;
             do {
-                System.out.print("CPF: ");
-                novoCPF = console.nextLine();
-                if(novoCPF.length()==0) {
+                System.out.print("Email: ");
+                novoEmail = console.nextLine();
+                if(novoEmail.length()==0) {
                     dadosValidos = true;
                 } else {
-                    if(!novoCPF.matches("\\d{11}")) {
-                        System.out.println("CPF inválido!");
-                    } else {
-                        Pessoa p1 = arqPessoas.readCPF(novoCPF);
-                        if(p1!=null)
-                            System.out.println("CPF já cadastrado!");
-                        else 
-                            dadosValidos = true;
-                    }
+                    Usuario p1 = arqUsuario.readEmail(novoEmail);
+                    if(p1!=null)
+                        System.out.println("Email já cadastrado!");
+                    else 
+                        dadosValidos = true;
                 }
             } while(!dadosValidos);
-            if(novoCPF.length()>0)
-                p.setCpf(novoCPF);
+            if(novoEmail.length()>0)
+                p.setEmail(novoEmail);
 
-            // Alteração da data de nascimento
+            // Alteração da pergunta
             dadosValidos = false;
-            novaDN = LocalDate.now();
             String aux = "";
             do {
                 System.out.print("Data de nascimento (dd/mm/aaaa): ");
@@ -303,17 +310,17 @@ public class MenuPessoas {
             System.out.println("Nenhuma pessoa cadastrada!");
     }
 
-    public void mostraPessoa(Pessoa p) {
+    public void mostraPessoa(Usuario p) {
         System.out.println( 
             "Nome....: " + p.getNome() +
-            "\nCPF.....: " + p.getCpf() +
-            "\nDt.Nasc.: " + p.getDataNascimento() + "\n"
+            "\nEmail.....: " + p.getEmail() +
+            "\nPergunta: " + p.getPergunta() + "\n"
         );
     }
 
     public  void popular() throws Exception {
-        arqPessoas.close();
-        arqPessoas = null;
+        arqUsuario.close();
+        arqUsuario = null;
 
         (new File("./dados/pessoa/dados.db")).delete();
         (new File("./dados/pessoa/indiceDireto.d.db")).delete();
@@ -323,7 +330,7 @@ public class MenuPessoas {
         (new File("./dados/pessoa/indiceNome.db")).delete();
 
 
-        arqPessoas = new ArquivoPessoa();
+        arqPessoas = new ArquivoUsuario();
 
         arqPessoas.create(new Pessoa("Johann Hari", "11111111111", LocalDate.of(1979, 1, 21)));
         arqPessoas.create(new Pessoa( "Brian Traci", "22222222222", LocalDate.of(1944, 1, 5)));

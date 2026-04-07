@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class ArquivoUsuario extends Arquivo<Usuario> {
     
-    HashExtensivel<ParCpfId> indiceCPF;
+    HashExtensivel<ParEmailId> indiceCPF;
     ArvoreBMais<ParNomeId> indiceNome;
 
     public ArquivoUsuario() throws Exception {
@@ -25,13 +25,13 @@ public class ArquivoUsuario extends Arquivo<Usuario> {
     @Override
     public int create(Usuario p) throws Exception {
         int id = super.create(p);
-        indiceCPF.create(new ParCpfId(p.getCpf(), id));
+        indiceCPF.create(new ParEmailId(p.getCpf(), id));
         indiceNome.create(new ParNomeId(p.getNome(), id));
         return id;
     }
 
     public Usuario readCPF(String cpf) throws Exception {
-        ParCpfId pci = indiceCPF.read(Math.abs(cpf.hashCode()));
+        ParEmailId pci = indiceCPF.read(Math.abs(cpf.hashCode()));
         if(pci == null)
             return null;
         Usuario p = read(pci.getId());
@@ -84,7 +84,7 @@ public class ArquivoUsuario extends Arquivo<Usuario> {
         if(super.update(novaUsuario)) {
             if(p.getCpf().compareTo(novaUsuario.getCpf())!=0) {
                 indiceCPF.delete(Math.abs(p.getCpf().hashCode()));
-                indiceCPF.create(new ParCpfId(novaUsuario.getCpf(), novaUsuario.getID()));
+                indiceCPF.create(new ParEmailId(novaUsuario.getCpf(), novaUsuario.getID()));
             }
             if(p.getNome().compareTo(novaUsuario.getNome())!=0) {
                 indiceNome.delete(new ParNomeId(p.getNome(), p.getID()));
