@@ -1,130 +1,133 @@
 package arquivo;
+
 import aed3.*;
 import entidades.Curso;
 
 import java.util.ArrayList;
 
 public class ArquivoCurso extends Arquivo<Curso> {
-    
-    HashExtensivel<ParIsbnId> indiceIsbn;
-    ArvoreBMais<ParNomeId> indiceTitulo;
-    ArvoreBMais<ParIdId> indiceAutor;
+
+    HashExtensivel<ParCodigoId> indiceCodigo;
+    ArvoreBMais<ParNomeId> indiceNome;
+    ArvoreBMais<ParIdUsuarioId> indiceUsuario;
 
     public ArquivoCurso() throws Exception {
-        super("livro", Curso.class.getConstructor());
-        indiceIsbn = new HashExtensivel<>(
-            ParIsbnId.class.getConstructor(),
-            4, 
-            "./dados/livro/indiceISBN.d.db", 
-            "./dados/livro/indiceISBN.c.db");
-        indiceTitulo = new ArvoreBMais<>(
+        super("curso", Curso.class.getConstructor());
+        indiceCodigo = new HashExtensivel<>(
+            ParCodigoId.class.getConstructor(),
+            4,
+            "./dados/curso/indiceCodigo.d.db",
+            "./dados/curso/indiceCodigo.c.db");
+        indiceNome = new ArvoreBMais<>(
             ParNomeId.class.getConstructor(),
             4,
-           "./dados/livro/indiceTitulo.db");
-        indiceAutor = new ArvoreBMais<>(
-            ParIdId.class.getConstructor(),
+            "./dados/curso/indiceNome.db");
+        indiceUsuario = new ArvoreBMais<>(
+            ParIdUsuarioId.class.getConstructor(),
             4,
-            "./dados/livro/indiceAutor.db");
-
+            "./dados/curso/indiceUsuario.db");
     }
 
     @Override
-    public int create(Curso p) throws Exception {
-        int id = super.create(p);
-        indiceIsbn.create(new ParIsbnId(p.getIsbn(), id));
-        indiceTitulo.create(new ParNomeId(p.getTitulo(), id));
-        indiceAutor.create(new ParIdId(p.getIdAutor(), id));
+    public int create(Curso curso) throws Exception {
+        int id = super.create(curso);
+        indiceCodigo.create(new ParCodigoId(curso.getCodigoCompartilhavel(), id));
+        indiceNome.create(new ParNomeId(curso.getNome(), id));
+        indiceUsuario.create(new ParIdUsuarioId(curso.getIdUsuario(), id));
         return id;
     }
 
-    public Curso readIsbn(String Isbn) throws Exception {
-        ParIsbnId pci = indiceIsbn.read(Math.abs(Isbn.hashCode()));
-        if(pci == null)
+    public Curso readCodigo(String codigo) throws Exception {
+        ParCodigoId pci = indiceCodigo.read(Math.abs(codigo.hashCode()));
+        if (pci == null)
             return null;
-        Curso p = read(pci.getId());
-        return p;
+        return read(pci.getId());
     }
 
-    public Curso[] readTitulo(String titulo) throws Exception {
-        ArrayList<ParNomeId> pnis = indiceTitulo.read(new ParNomeId(titulo,-1));  // O -1 indica que a comparação só deve verificar o titulo (e não o ID)
-        if(pnis.isEmpty())
+    public Curso[] readNome(String nome) throws Exception {
+        ArrayList<ParNomeId> pnis = indiceNome.read(new ParNomeId(nome, -1));
+        if (pnis.isEmpty())
             return new Curso[0];
 
-        Curso[] Livros = new Curso[pnis.size()];
-        int i=0;
+        Curso[] cursos = new Curso[pnis.size()];
+        int i = 0;
         for (ParNomeId pni : pnis) {
-            Livros[i++] = super.read(pni.getId());            
+            cursos[i++] = super.read(pni.getId());
         }
-        return Livros;
+        return cursos;
     }
 
-    public Curso[] readAutor(int idAutor) throws Exception {
-        ArrayList<ParIdId> piis = indiceAutor.read(new ParIdId(idAutor, -1));  // O -1 indica que a comparação só deve verificar o idAutor (e não o ID do livro)
-        if(piis.isEmpty())
+    /**
+     * Retorna todos os cursos de um usuário específico, ordenados por nome.
+     * Usa a árvore B+ para busca eficiente.
+     */
+    public Curso[] readPorUsuario(int idUsuario) throws Exception {
+        ArrayList<ParIdUsuarioId> piuis = indiceUsuario.read(new ParIdUsuarioId(idUsuario, -1));
+        if (piuis.isEmpty())
             return new Curso[0];
 
-        Curso[] Livros = new Curso[piis.size()];
-        int i=0;
-        for (ParIdId pii : piis) {
-            Livros[i++] = super.read(pii.getId2());            
+        Curso[] cursos = new Curso[piuis.size()];
+        int i = 0;
+        for (ParIdUsuarioId piui : piuis) {
+            cursos[i++] = super.read(piui.getIdCurso());
         }
-        return Livros;
+        return cursos;
     }
 
     public Curso[] readAll() throws Exception {
-        ArrayList<ParNomeId> pnis = indiceTitulo.read(null);  // null retorna todos os registros do índice
-        if(pnis.isEmpty())
+        ArrayList<ParNomeId> pnis = indiceNome.read(null);
+        if (pnis.isEmpty())
             return new Curso[0];
 
-        Curso[] Livros = new Curso[pnis.size()];
-        int i=0;
+        Curso[] cursos = new Curso[pnis.size()];
+        int i = 0;
         for (ParNomeId pni : pnis) {
-            Livros[i++] = super.read(pni.getId());            
+            cursos[i++] = super.read(pni.getId());
         }
-        return Livros;
+        return cursos;
     }
 
     @Override
     public boolean delete(int id) throws Exception {
-        Curso p = read(id);
-        if(p!=null)
-            if(super.delete(id)) {
-                indiceIsbn.delete(Math.abs(p.getIsbn().hashCode()));
-                indiceTitulo.delete(new ParNomeId(p.getTitulo(), p.getID()));
-                indiceAutor.delete(new ParIdId(p.getIdAutor(), p.getID()));
+        Curso curso = read(id);
+        if (curso != null) {
+            if (super.delete(id)) {
+                indiceCodigo.delete(Math.abs(curso.getCodigoCompartilhavel().hashCode()));
+                indiceNome.delete(new ParNomeId(curso.getNome(), curso.getID()));
+                indiceUsuario.delete(new ParIdUsuarioId(curso.getIdUsuario(), curso.getID()));
                 return true;
             }
+        }
         return false;
     }
 
     @Override
-    public boolean update(Curso novoLivro) throws Exception {
-        Curso p = read(novoLivro.getID());
-        if(p==null)
+    public boolean update(Curso novoCurso) throws Exception {
+        Curso curso = read(novoCurso.getID());
+        if (curso == null)
             return false;
-        if(super.update(novoLivro)) {
-            if(p.getIsbn().compareTo(novoLivro.getIsbn())!=0) {
-                indiceIsbn.delete(Math.abs(p.getIsbn().hashCode()));
-                indiceIsbn.create(new ParIsbnId(novoLivro.getIsbn(), novoLivro.getID()));
+        if (super.update(novoCurso)) {
+            if (!curso.getCodigoCompartilhavel().equals(novoCurso.getCodigoCompartilhavel())) {
+                indiceCodigo.delete(Math.abs(curso.getCodigoCompartilhavel().hashCode()));
+                indiceCodigo.create(new ParCodigoId(novoCurso.getCodigoCompartilhavel(), novoCurso.getID()));
             }
-            if(p.getTitulo().compareTo(novoLivro.getTitulo())!=0) {
-                indiceTitulo.delete(new ParNomeId(p.getTitulo(), p.getID()));
-                indiceTitulo.create(new ParNomeId( novoLivro.getTitulo(), novoLivro.getID()));
+            if (!curso.getNome().equals(novoCurso.getNome())) {
+                indiceNome.delete(new ParNomeId(curso.getNome(), curso.getID()));
+                indiceNome.create(new ParNomeId(novoCurso.getNome(), novoCurso.getID()));
             }
-            if(p.getIdAutor() != novoLivro.getIdAutor()) {
-                indiceAutor.delete(new ParIdId(p.getIdAutor(), p.getID()));
-                indiceAutor.create(new ParIdId(novoLivro.getIdAutor(), novoLivro.getID()));
+            if (curso.getIdUsuario() != novoCurso.getIdUsuario()) {
+                indiceUsuario.delete(new ParIdUsuarioId(curso.getIdUsuario(), curso.getID()));
+                indiceUsuario.create(new ParIdUsuarioId(novoCurso.getIdUsuario(), novoCurso.getID()));
             }
             return true;
         }
         return false;
     }
 
-
     public void close() throws Exception {
         super.close();
-        indiceIsbn.close();
-        indiceTitulo.close();
-        indiceAutor.close();
+        indiceCodigo.close();
+        indiceNome.close();
+        indiceUsuario.close();
     }
 }

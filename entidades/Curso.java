@@ -5,35 +5,42 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import aed3.InterfaceEntidade;
 
 public class Curso implements InterfaceEntidade {
-    
+
+    // Estados do curso
+    public static final short ATIVO_INSCRICOES = 0;
+    public static final short ATIVO_SEM_INSCRICOES = 1;
+    public static final short CONCLUIDO = 2;
+    public static final short CANCELADO = 3;
+
     private int id;
     private int idUsuario;
     private String nome;
     private LocalDate dataInicio;
-    private String desc;
-    private String codComp;
+    private String descricao;
+    private String codigoCompartilhavel;
     private short estado;
 
     public Curso() {
-        this(-1, -1, "", LocalDate.now(), "", "", (short)-1);
+        this(-1, -1, "", LocalDate.now(), "", "", ATIVO_INSCRICOES);
     }
 
-    public Curso(int i, String n, LocalDate d, String de, String c, short e) {
-        this(-1, i, n, d, de, c, e);
+    public Curso(int idUsuario, String nome, LocalDate dataInicio, String descricao, String codigo, short estado) {
+        this(-1, idUsuario, nome, dataInicio, descricao, codigo, estado);
     }
 
-    public Curso(int i, int iu, String n, LocalDate d, String de, String c, short e) {
-        id = i;
-        idUsuario = iu;
-        nome = n;
-        dataInicio = d;
-        desc = de;
-        codComp = c;
-        estado = e;
+    public Curso(int id, int idUsuario, String nome, LocalDate dataInicio, String descricao, String codigo, short estado) {
+        this.id = id;
+        this.idUsuario = idUsuario;
+        this.nome = nome;
+        this.dataInicio = dataInicio;
+        this.descricao = descricao;
+        this.codigoCompartilhavel = codigo;
+        this.estado = estado;
     }
 
     public int getID() {
@@ -44,6 +51,14 @@ public class Curso implements InterfaceEntidade {
         this.id = id;
     }
 
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -52,57 +67,67 @@ public class Curso implements InterfaceEntidade {
         this.nome = nome;
     }
 
-    public LocalDate getData() {
+    public LocalDate getDataInicio() {
         return dataInicio;
     }
 
-    public void setData(LocalDate d) {
-        this.dataInicio = d;
+    public void setDataInicio(LocalDate data) {
+        this.dataInicio = data;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
-    public String getCod() {
-        return codComp;
+    public String getCodigoCompartilhavel() {
+        return codigoCompartilhavel;
     }
 
-    public void setCod(String cod) {
-        this.codComp = cod;
+    public void setCodigoCompartilhavel(String codigo) {
+        this.codigoCompartilhavel = codigo;
     }
 
     public short getEstado() {
         return estado;
     }
 
-    public void setEstado(short n) {
-        this.estado = n;
+    public void setEstado(short estado) {
+        this.estado = estado;
+    }
+
+    public String getEstadoDescricao() {
+        switch (estado) {
+            case 0: return "Ativo e recebendo inscrições";
+            case 1: return "Ativo, mas sem novas inscrições";
+            case 2: return "Curso realizado e concluído";
+            case 3: return "Curso cancelado";
+            default: return "Estado desconhecido";
+        }
     }
 
     @Override
     public String toString() {
-        return   "ID........: " + id + 
-               "\nNome......: " + nome +
-               "\nDataInicio....: " + dataInicio +
-               "\nDescrição.....: " + desc +
-               "\nCód.Comp....: " + codComp +
-               "\nEstado.: " + estado;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return "CÓDIGO........: " + codigoCompartilhavel +
+               "\nNOME..........: " + nome +
+               "\nDESCRIÇÃO.....: " + descricao +
+               "\nDATA DE INÍCIO: " + dataInicio.format(formatter) +
+               "\nESTADO........: " + getEstadoDescricao();
     }
-    
+
     public byte[] toByteArray() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
         dos.writeInt(id);
         dos.writeInt(idUsuario);
         dos.writeUTF(nome);
-        dos.writeInt((int)dataInicio.toEpochDay());
-        dos.writeUTF(desc);
-        dos.writeUTF(codComp);
+        dos.writeInt((int) dataInicio.toEpochDay());
+        dos.writeUTF(descricao);
+        dos.writeUTF(codigoCompartilhavel);
         dos.writeShort(estado);
         return baos.toByteArray();
     }
@@ -114,9 +139,8 @@ public class Curso implements InterfaceEntidade {
         idUsuario = dis.readInt();
         nome = dis.readUTF();
         dataInicio = LocalDate.ofEpochDay(dis.readInt());
-        desc = dis.readUTF();
-        codComp = dis.readUTF();
+        descricao = dis.readUTF();
+        codigoCompartilhavel = dis.readUTF();
         estado = dis.readShort();
     }
-
 }

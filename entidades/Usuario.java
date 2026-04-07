@@ -4,14 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.time.LocalDate;
 
 import aed3.InterfaceEntidade;
 
-
-
 public class Usuario implements InterfaceEntidade {
-    
+
     private int id;
     private String nome;
     private String email;
@@ -34,7 +31,6 @@ public class Usuario implements InterfaceEntidade {
         hashSenha = h;
         perguntaSecreta = p;
         hashRespostaSecreta = hR;
-        
     }
 
     public int getID() {
@@ -61,18 +57,38 @@ public class Usuario implements InterfaceEntidade {
         this.email = email;
     }
 
+    public int getHashSenha() {
+        return hashSenha;
+    }
+
     public void setSenha(String senha) {
         hashSenha = senha.hashCode();
     }
 
+    public String getPerguntaSecreta() {
+        return perguntaSecreta;
+    }
+
+    public void setPerguntaSecreta(String pergunta) {
+        perguntaSecreta = pergunta;
+    }
+
+    public int getHashRespostaSecreta() {
+        return hashRespostaSecreta;
+    }
+
+    public void setRespostaSecreta(String resposta) {
+        hashRespostaSecreta = resposta.hashCode();
+    }
+
     @Override
     public String toString() {
-        return "ID......: " + id + 
+        return "ID......: " + id +
                "\nNome....: " + nome +
-               "\nEmail.....: " + email +
-               "\nPergunta Secreta: " + perguntaSecreta + "\n";
+               "\nEmail...: " + email +
+               "\nPergunta Secreta: " + perguntaSecreta;
     }
-    
+
     public byte[] toByteArray() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
@@ -95,5 +111,4 @@ public class Usuario implements InterfaceEntidade {
         perguntaSecreta = dis.readUTF();
         hashRespostaSecreta = dis.readInt();
     }
-
 }
