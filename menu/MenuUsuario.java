@@ -105,9 +105,9 @@ public class MenuUsuario {
     }
 
     private void inserir() throws Exception {
-<<<<<<< HEAD
+
         System.out.println("\n=== INCLUSÃO DE USUÁRIO ===");
-=======
+
         String nome;
         String email;
         String senha;
@@ -116,7 +116,7 @@ public class MenuUsuario {
         boolean dadosValidos;                  
         System.out.println("INCLUSÃO");
         System.out.print("Nome: ");
->>>>>>> origin/main
+
 
         Usuario usuario = visao.leUsuario();
         if (usuario == null) {
@@ -124,7 +124,7 @@ public class MenuUsuario {
             return;
         }
 
-<<<<<<< HEAD
+
         // Verifica se email já está cadastrado
         Usuario existente = arqUsuario.readEmail(usuario.getEmail());
         if (existente != null) {
@@ -161,7 +161,7 @@ public class MenuUsuario {
             System.out.println("\n=== USUÁRIOS ENCONTRADOS ===");
             for (Usuario u : usuarios) {
                 visao.mostraUsuario(u);
-=======
+
         // email
         dadosValidos = false;
         do {
@@ -295,22 +295,22 @@ public class MenuUsuario {
             System.out.println("Usuário não encontrado!");
             return;
         }
-<<<<<<< HEAD
-=======
+
+
         Usuario p = arqUsuario.readCPF(cpf);
->>>>>>> origin/main
+
 
         visao.mostraUsuario(usuario);
         Usuario alterado = visao.leAlteracaoUsuario(usuario);
 
-<<<<<<< HEAD
+
         if (arqUsuario.update(alterado)) {
             System.out.println("Usuário atualizado!");
         } else {
             System.out.println("Erro na atualização!");
         }
     }
-=======
+
             System.out.println("\nAltere os dados a seguir. Deixe o campo em branco quando não quiser alterar.");
             String novoNome;
             String novoEmail;
@@ -318,7 +318,7 @@ public class MenuUsuario {
             String novaSenha;
             String novaResposta;
             LocalDate novaDN;
->>>>>>> origin/main
+
 
     private void excluir() throws Exception {
         System.out.println("\n=== EXCLUSÃO DE USUÁRIO ===");
@@ -326,7 +326,7 @@ public class MenuUsuario {
         String email = console.nextLine();
         if (email.isEmpty()) return;
 
-<<<<<<< HEAD
+
         Usuario usuario = arqUsuario.readEmail(email);
         if (usuario == null) {
             System.out.println("Usuário não encontrado!");
@@ -346,7 +346,7 @@ public class MenuUsuario {
                 if (c.getEstado() == Curso.ATIVO_INSCRICOES || c.getEstado() == Curso.ATIVO_SEM_INSCRICOES) {
                     cursosAtivos++;
                 }
-=======
+
             // Alteração do email
             boolean dadosValidos = false;
             do {
@@ -398,7 +398,7 @@ public class MenuUsuario {
                     System.out.println("Pessoa atualizada!");
                 else
                     System.out.println("Erro na alteração!");
->>>>>>> origin/main
+
             }
 
             if (cursosAtivos > 0) {
@@ -423,7 +423,7 @@ public class MenuUsuario {
         }
     }
 
-<<<<<<< HEAD
+
     private void listagem() throws Exception {
         System.out.println("\n=== LISTAGEM DE USUÁRIOS ===");
         Usuario[] usuarios = arqUsuario.readAll();
@@ -436,7 +436,7 @@ public class MenuUsuario {
             System.out.println("Nenhum usuário cadastrado!");
         }
     }
-=======
+
     public void mostraPessoa(Usuario p) {
         System.out.println( 
             "Nome....: " + p.getNome() +
@@ -465,6 +465,4 @@ public class MenuUsuario {
         arqPessoas.create(new Pessoa( "Morgan Housel", "44444444444", LocalDate.of(1986, 7, 20)));
     }
 
-    
->>>>>>> origin/main
 }

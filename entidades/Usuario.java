@@ -1,11 +1,10 @@
 package entidades;
 
+import aed3.InterfaceEntidade;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-
-import aed3.InterfaceEntidade;
 
 public class Usuario implements InterfaceEntidade {
 
@@ -65,7 +64,7 @@ public class Usuario implements InterfaceEntidade {
         hashSenha = senha.hashCode();
     }
 
-<<<<<<< HEAD
+
     public String getPerguntaSecreta() {
         return perguntaSecreta;
     }
@@ -81,7 +80,7 @@ public class Usuario implements InterfaceEntidade {
     public void setRespostaSecreta(String resposta) {
         hashRespostaSecreta = resposta.hashCode();
     }
-=======
+
     public void setPergunta(String p) {
         perguntaSecreta = p;
     }
@@ -94,7 +93,7 @@ public class Usuario implements InterfaceEntidade {
         this.hashRespostaSecreta = r.hashCode();
     }
 
->>>>>>> origin/main
+
 
     @Override
     public String toString() {
