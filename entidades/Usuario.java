@@ -65,6 +65,7 @@ public class Usuario implements InterfaceEntidade {
         hashSenha = senha.hashCode();
     }
 
+<<<<<<< HEAD
     public String getPerguntaSecreta() {
         return perguntaSecreta;
     }
@@ -80,6 +81,20 @@ public class Usuario implements InterfaceEntidade {
     public void setRespostaSecreta(String resposta) {
         hashRespostaSecreta = resposta.hashCode();
     }
+=======
+    public void setPergunta(String p) {
+        perguntaSecreta = p;
+    }
+
+    public String getPergunta() {
+        return perguntaSecreta;
+    }
+
+    public void setResposta(String r) {
+        this.hashRespostaSecreta = r.hashCode();
+    }
+
+>>>>>>> origin/main
 
     @Override
     public String toString() {

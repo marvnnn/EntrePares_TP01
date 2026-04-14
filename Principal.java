@@ -1,9 +1,12 @@
 
 import menu.MenuCursos;
 import menu.MenuUsuario;
+<<<<<<< HEAD
 import arquivo.ArquivoUsuario;
 import arquivo.ArquivoCurso;
 import entidades.Usuario;
+=======
+>>>>>>> origin/main
 
 import java.util.Scanner;
 
@@ -46,6 +49,7 @@ public class Principal {
             } catch (NumberFormatException e) {
                 opcao = -1;
             }
+<<<<<<< HEAD
             if (usuarioAtivo != null) {
                 switch (opcao) {
                 case 1:
@@ -73,6 +77,15 @@ public class Principal {
                     usuarioAtivo = null;
                     MenuCursos.setUsuarioAtivo(null);
                     System.out.println("Logout realizado!");
+=======
+
+            switch (opcao) {
+                case 1: 
+                    (new MenuUsuario()).menu();
+                    break;
+                case 2:
+                    (new MenuCursos()).menu();
+>>>>>>> origin/main
                     break;
                 case 0:
                     System.out.println("Saindo...");

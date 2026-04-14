@@ -7,7 +7,12 @@ import java.util.ArrayList;
 
 public class ArquivoUsuario extends Arquivo<Usuario> {
 
+
     HashExtensivel<ParEmailId> indiceEmail;
+
+    
+    HashExtensivel<ParEmailId> indiceCPF;
+
     ArvoreBMais<ParNomeId> indiceNome;
 
     public ArquivoUsuario() throws Exception {
@@ -26,14 +31,23 @@ public class ArquivoUsuario extends Arquivo<Usuario> {
     @Override
     public int create(Usuario p) throws Exception {
         int id = super.create(p);
+
         indiceEmail.create(new ParEmailId(p.getEmail(), id));
+
+        indiceCPF.create(new ParEmailId(p.getCpf(), id));
+
         indiceNome.create(new ParNomeId(p.getNome(), id));
         return id;
     }
 
+
     public Usuario readEmail(String email) throws Exception {
         ParEmailId pei = indiceEmail.read(Math.abs(email.hashCode()));
         if (pei == null)
+
+    public Usuario readCPF(String cpf) throws Exception {
+        ParEmailId pci = indiceCPF.read(Math.abs(cpf.hashCode()));
+        if(pci == null)
             return null;
         return read(pei.getId());
     }
@@ -82,10 +96,17 @@ public class ArquivoUsuario extends Arquivo<Usuario> {
         Usuario p = read(novoUsuario.getID());
         if (p == null)
             return false;
+
         if (super.update(novoUsuario)) {
             if (!p.getEmail().equals(novoUsuario.getEmail())) {
                 indiceEmail.delete(Math.abs(p.getEmail().hashCode()));
                 indiceEmail.create(new ParEmailId(novoUsuario.getEmail(), novoUsuario.getID()));
+
+        if(super.update(novaUsuario)) {
+            if(p.getCpf().compareTo(novaUsuario.getCpf())!=0) {
+                indiceCPF.delete(Math.abs(p.getCpf().hashCode()));
+                indiceCPF.create(new ParEmailId(novaUsuario.getCpf(), novaUsuario.getID()));
+
             }
             if (!p.getNome().equals(novoUsuario.getNome())) {
                 indiceNome.delete(new ParNomeId(p.getNome(), p.getID()));
