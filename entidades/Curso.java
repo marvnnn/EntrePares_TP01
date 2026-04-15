@@ -11,7 +11,6 @@ import aed3.InterfaceEntidade;
 
 public class Curso implements InterfaceEntidade {
 
-    // Estados do curso
     public static final short ATIVO_INSCRICOES = 0;
     public static final short ATIVO_SEM_INSCRICOES = 1;
     public static final short CONCLUIDO = 2;
@@ -101,8 +100,8 @@ public class Curso implements InterfaceEntidade {
 
     public String getEstadoDescricao() {
         switch (estado) {
-            case 0: return "Ativo e recebendo inscrições";
-            case 1: return "Ativo, mas sem novas inscrições";
+            case 0: return "Curso ativo e recebendo inscrições";
+            case 1: return "Curso ativo, mas sem novas inscrições";
             case 2: return "Curso realizado e concluído";
             case 3: return "Curso cancelado";
             default: return "Estado desconhecido";
