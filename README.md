@@ -23,3 +23,5 @@ Sim. As funcionalidades do TP1 estão implementadas e funcionando.
 
 8) O trabalho é original e não a cópia de um trabalho de outro grupo?
 Sim. O código foi produzido pelo meu grupo.
+
+Link do vídeo: https://www.youtube.com/watch?v=mtJ9vNV7I7o
