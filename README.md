@@ -16,10 +16,10 @@ Sim. O relacionamento foi implementado com o par (idUsuario, idCurso) em árvore
 Sim.
 
 6) O trabalho compila corretamente?
-Sim. Considerando a versão corrigida atual do projeto compila corretamente.
+Sim. A versão atual do projeto compila corretamente.
 
 7) O trabalho está completo e funcionando sem erros de execução?
 Sim. As funcionalidades do TP1 estão implementadas e funcionando.
 
 8) O trabalho é original e não a cópia de um trabalho de outro grupo?
-Sim. Se o código foi produzido pelo seu grupo.
+Sim. O código foi produzido pelo meu grupo.
